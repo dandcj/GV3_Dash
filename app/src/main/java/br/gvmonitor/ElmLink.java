@@ -91,6 +91,9 @@ final class ElmLink {
                 listener.onLink(0, 0, "Desconectado: " + e.getMessage());
             } catch (InterruptedException e) {
                 // parando
+            } catch (RuntimeException e) {
+                // qualquer erro inesperado (ex.: permissao) vira mensagem na tela em vez de fechar o app
+                listener.onLink(0, 0, "Erro: " + e.getClass().getSimpleName() + " " + e.getMessage());
             } finally {
                 closeQuietly();
             }
@@ -104,7 +107,7 @@ final class ElmLink {
     @SuppressLint("MissingPermission")
     private void connect() throws IOException {
         BluetoothDevice dev = adapter.getRemoteDevice(mac);
-        adapter.cancelDiscovery();
+        // Sem cancelDiscovery(): no Android 12+ exige BLUETOOTH_SCAN e derruba o app com SecurityException.
         try {
             sock = dev.createRfcommSocketToServiceRecord(SPP);
             sock.connect();
