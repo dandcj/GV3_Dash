@@ -74,7 +74,12 @@ public class MainActivity extends Activity implements ElmLink.Listener {
     @Override
     public void onRequestPermissionsResult(int code, String[] perms, int[] res) {
         if (isFinishing()) return;
-        startLink();
+        if (res.length > 0 && res[0] == PackageManager.PERMISSION_GRANTED) {
+            startLink();
+        } else {
+            view.message = "Permita 'Dispositivos proximos' nas configuracoes do app";
+            view.invalidate();
+        }
     }
 
     @Override
